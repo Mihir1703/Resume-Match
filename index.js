@@ -5,12 +5,11 @@ const fs = require('fs');
 const mongoose = require('mongoose');
 const cors = require('cors')
 const { spawn } = require('child_process');
-const User = require('./models/User');
 const Jobs = require('./models/Jobs');
-const Application = require('./models/Application');
+const User = require('./models/User');
 
 const app = express();
-const port = 3000;
+const port = 3001;
 
 mongoose.connect('mongodb+srv://mihir:mihir@cluster0.ssu46.mongodb.net/Resume?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
     console.log('Connected to database');
@@ -19,7 +18,11 @@ mongoose.connect('mongodb+srv://mihir:mihir@cluster0.ssu46.mongodb.net/Resume?re
 // Set up storage engine for Multer
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, './output/');
+        const job_id = req.body.job_id;
+        const dir = `./output/${job_id}`;
+        console.log(req.body);
+        fs.mkdirSync(dir, { recursive: true })
+        cb(null, dir);
     },
     filename: function (req, file, cb) {
         cb(null, file.originalname);
@@ -57,116 +60,37 @@ function runPythonScript(scriptPath, args) {
 
 // Initialize Multer middleware
 const upload = multer({ storage: storage });
+require('./routes')(app, upload, runPythonScript);
 
-app.post('/createUser', async (req, res) => {
+app.post('/api/application/apply', upload.fields([{
+    name: 'resume'
+}]), async function (req, res) {
     try {
-        let { name, email, password } = req.body
-
-        let user = new User({
-            name,
-            email,
-            password
-        })
-        await user.save()
-        res.send(user._id)
-    } catch (err) {
-        console.log(err)
-        res.send(err)
-    }
-})
-
-app.post('login', async (req, res) => {
-    try {
-        const { email, password } = req.body
-        const data = await User.findOne({ email: email })
-        if (data.password === password) {
-            res.send(data._id)
-        } else {
-            res.send('Incorrect password')
+        const { gh, lc, cf, user_id, job_id } = req.body;
+        console.log(user_id,job_id);
+        const job = await Jobs.findById(job_id);
+        if (!job) {
+            res.status(200).json({ success: false, err: 'Job not found' });
+            return;
         }
+        const user = await User.findById(user_id);
+        if (!user) {
+            res.status(200).json({ success: false, err: 'User not found' });
+            return;
+        }
+        const desc = job.jobDescription;
+        fs.writeFileSync('output/desc.txt', desc, 'utf8');
+        console.log('File 1 saved at:', req.files['resume'][0].path);
+        let data = await runPythonScript('resume-scorer/main.py', ['./output/desc.txt', './' + req.files['resume'][0].path, gh, cf, lc])
+        console.log(data);
+        data = Number(data);
+        console.log(data);
+        const application = await Application.create({ jobId: job_id, userId: user_id, score: data, resume: req.files['resume'][0].path, gh: gh, lc: lc, cf: cf });
+        application.score  = undefined;
+        res.status(200).json({ success: true, application });
     } catch (err) {
-        res.send(err)
-    }
-})
-
-app.post('/createJob', async (req, res) => {
-    const { userId, jobTitle, companyName, jobDescription, jobLocation, jobType } = req.body
-    const user = await User.findOne({ _id: userId })
-    if (user) {
-        let job = new Jobs({
-            userId,
-            jobTitle,
-            companyName,
-            jobDescription,
-            jobLocation,
-            jobType
-        })
-        await job.save()
-        return res.send('Job created')
-    }
-    return res.send('User not found')
-})
-
-app.get('/getJobs', async (req, res) => {
-    const data = await Jobs.find()
-    res.send(data)
-})
-
-app.get('/getJob/:id', async (req, res) => {
-    const data = await Jobs.findOne({ _id: req.params.id })
-    res.send(data)
-})
-
-app.post('/my_appplied_jobs', async (req, res) => {
-    const { userId } = req.body
-    const data = await Jobs.find({ userId: userId })
-    res.send(data)
-})
-
-app.post('/my_posted_jobs', async (req, res) => {
-    const { userId } = req.body
-    const data = await Jobs.find({ userId: userId })
-    res.send(data)
-})
-
-app.post('/my_posted/:id', async (req, res) => {
-    const { userId } = req.body
-    const data = await Jobs.findOne({ userId: userId, _id: req.params.id })
-    const applied = await Application.findOne({ jobId: req.params.id })
-    if (applied && data) {
-        res.send(applied)
-    }
-    res.send("data not found")
-})
-
-// POST request handler
-app.post('/apply/:id', upload.fields([{ name: 'resume' }]), async function (req, res) {
-    // Extract variables from request body
-    try{
-        let jobs = await Jobs.findOne({ _id: req.params.id })
-    if (!jobs) {
-        return res.send('Job not found')
-    }
-    const { desc, gh, lc, cf } = req.body;
-
-    fs.writeFileSync('output/desc.txt', desc, 'utf8');
-    // Log paths of saved files to console
-    console.log('File 1 saved at:', req.files['resume'][0].path);
-    console.log('../' + req.files['resume'][0].path)
-    let data = await runPythonScript('resume-scorer/main.py', ['./output/desc.txt', './' + req.files['resume'][0].path, gh, cf, lc])
-    const info = new Application({
-        JobId: req.params.id,
-        resume: req.files['resume'][0].path,
-        score: data,
-        gh,
-        lc,
-        cf
-    })
-    await info.save()
-    res.send('Applied Successfully' + data);
-    }catch(err){
         console.log(err)
-        res.send(err)
+        res.json({ success: false, err });
     }
 });
 
