@@ -8,7 +8,7 @@ const SingleJob = () => {
     const { id, is_applied } = useParams();
 
     const getJob = async () => {
-        const response = await axios.get(`http://localhost:3001/api/job/get/${id}`);
+        const response = await axios.get(`/api/job/get/${id}`);
         console.log(response.data);
         if (response.data.success) {
             setJob(response.data.job);
@@ -26,7 +26,7 @@ const SingleJob = () => {
         const data = new FormData(e.target);
         // data.append('user_id', localStorage.getItem('id'));
         // data.append('job_id', id);
-        const res = await axios.post('http://localhost:3001/api/application/apply', data, {
+        const res = await axios.post('/api/application/apply', data, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }

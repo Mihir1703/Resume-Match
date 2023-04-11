@@ -11,7 +11,7 @@ const PostJob = () => {
             object[key] = value;
         });
         console.log(object);
-        const res = await axios.post('http://localhost:3001/api/job/create', object);
+        const res = await axios.post('/api/job/create', object);
         console.log(res.data);
         if (res.data.success) {
             alert('Job posted successfully');

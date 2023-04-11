@@ -15,7 +15,7 @@ const SignUp = () => {
             password
         }
         console.log(data)
-        const response = await axios.post('http://localhost:3001/api/user/signup', data)
+        const response = await axios.post('/api/user/signup', data)
         console.log(response.data)
         if(response.data.success){
             localStorage.setItem('id', response.data.user._id)

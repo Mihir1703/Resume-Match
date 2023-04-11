@@ -7,7 +7,7 @@ const ShowApplied = () => {
 
     const getJobs = async () => {
         try {
-            const data = await axios.post('http://localhost:3001/api/job/getall', {
+            const data = await axios.post('/api/job/getall', {
                 userId: localStorage.getItem('id')
             });
             console.log(data.data);

@@ -9,7 +9,7 @@ const Login = () => {
     const handleSubmit = async (e) => {
         console.log('submit',e)
         e.preventDefault()
-        const res = await axios.post('http://localhost:3001/api/user/login', { email, password })
+        const res = await axios.post('/api/user/login', { email, password })
         console.log(res.data)   
         if (res.data.success) {
             localStorage.setItem('id', res.data.user._id)

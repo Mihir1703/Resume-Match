@@ -9,8 +9,8 @@ const Jobs = require('./models/Jobs');
 const User = require('./models/User');
 
 const app = express();
-const port = 3001;
-app.use(express.static(path.join(__dirname, 'output')));
+const port = 3000;
+// app.use(express.static(path.join(__dirname, 'output')));
 
 mongoose.connect('mongodb+srv://mihir:mihir@cluster0.ssu46.mongodb.net/Resume?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
     console.log('Connected to database');
@@ -58,6 +58,9 @@ function runPythonScript(scriptPath, args) {
         });
     });
 }
+
+app.use(express.static(path.join(__dirname, './frontend/build')));
+app.use(express.static(path.join(__dirname, 'output')));
 
 // Initialize Multer middleware
 const upload = multer({ storage: storage });

@@ -7,7 +7,7 @@ const ShowJobsApplication = () => {
 
     const getJobs = async () => {
         try {
-            const data = await axios.post(`http://localhost:3001/api/application/getMine/${localStorage.getItem('id')}`);
+            const data = await axios.post(`/api/application/getMine/${localStorage.getItem('id')}`);
             console.log(data.data);
             setJobs(data.data.applied);
             console.log(jobs);

@@ -7,7 +7,7 @@ const ShowApplicants = () => {
 
     React.useEffect(() => {
         const getApplications = async () => {
-            const response = await axios.post(`http://localhost:3001/api/job/posted_by_me`,{
+            const response = await axios.post(`/api/job/posted_by_me`,{
                 userId: localStorage.getItem('id')
             });
             console.log(response.data);

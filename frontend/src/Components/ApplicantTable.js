@@ -7,7 +7,7 @@ const ApplicantTable = () => {
     const { id } = useParams();
     useEffect(() => {
         const getApplicants = async () => {
-            const response = await axios.post(`http://localhost:3001/api/job/getApplied`, {
+            const response = await axios.post(`/api/job/getApplied`, {
                 userId: localStorage.getItem('id'),
                 jobId: id
             });
@@ -54,7 +54,7 @@ const ApplicantTable = () => {
                                 <tbody>
                                     {
                                         applicants.map((applicant, index) => {
-                                            let link = applicant.resume.replace('output/','http://localhost:3001/');
+                                            let link = applicant.resume.replace('output/','/');
                                             
                                             return (
                                                 <tr class="bg-white border-b">
