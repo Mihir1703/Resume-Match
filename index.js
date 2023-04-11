@@ -71,7 +71,7 @@ app.post('/api/application/apply', upload.fields([{
 }]), async function (req, res) {
     try {
         const { gh, lc, cf, user_id, job_id } = req.body;
-        console.log(user_id,job_id);
+        console.log(user_id, job_id);
         const job = await Jobs.findById(job_id);
         if (!job) {
             res.status(200).json({ success: false, err: 'Job not found' });
@@ -90,7 +90,7 @@ app.post('/api/application/apply', upload.fields([{
         data = Number(data);
         console.log(data);
         const application = await Application.create({ jobId: job_id, userId: user_id, score: data, resume: req.files['resume'][0].path, gh: gh, lc: lc, cf: cf });
-        application.score  = undefined;
+        application.score = undefined;
         res.status(200).json({ success: true, application });
     } catch (err) {
         console.log(err)
