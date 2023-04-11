@@ -43,6 +43,7 @@ def get_leetcode_score(username):
         for idx, i in enumerate(data):
             score += i['count'] * 10 * (1 + idx)
             score += (i['submissions']-i['count']) * 1 * (1 + idx)
+        score = 100 * score/(1000+1000+10000)
         return score
     else:
         # User not found

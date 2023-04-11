@@ -19,4 +19,5 @@ def get_gh_score(github_url):
 
     # Calculate the score based on the parameters
     score = num_repos * 10 + num_followers * 5 + num_stars
+    score = 100 * score/(1000+1000+10000)
     return score
