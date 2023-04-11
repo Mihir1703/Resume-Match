@@ -6,11 +6,13 @@ const Jobs = require('../models/Jobs');
 Router.post('/getMine/:user_id', async (req, res) => {
     try {
         const { user_id } = req.params;
-        const applications = await Application.find({ userId: user_id });
-        applications.forEach(async (application) => {
-            application.score = undefined;
+        let applications = await Application.find({ userId: user_id });
+        let apps = applications.map((application) => {
+            console.log(application.jobId.toString());
+            return application.jobId.toString();
         });
-        res.json({ success: true, applications });
+        let applied = await Jobs.find({ _id: { $in: apps } });
+        res.json({ success: true, applied, applications });
     } catch (err) {
         console.log(err);
         res.json({ success: false, err });
@@ -35,6 +37,7 @@ Router.post('/get/:job_id', async (req, res) => {
         res.json({ success: false, err });
     }
 });
+
 
 
 module.exports = Router

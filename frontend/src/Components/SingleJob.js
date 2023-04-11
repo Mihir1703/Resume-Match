@@ -5,7 +5,8 @@ import { useParams } from 'react-router-dom';
 
 const SingleJob = () => {
     const [job, setJob] = React.useState(undefined)
-    const { id } = useParams();
+    const { id, is_applied } = useParams();
+
     const getJob = async () => {
         const response = await axios.get(`http://localhost:3001/api/job/get/${id}`);
         console.log(response.data);
@@ -50,10 +51,12 @@ const SingleJob = () => {
                 </div>
                 <div class="flex flex-wrap -m-4">
                 </div>
-                <div><section class="max-w-4xl p-6 mx-auto bg-gray-200 rounded-md shadow-md dark:bg-gray-800">
-                    <h2 class="text-lg font-semibold text-gray-700 capitalize dark:text-white">Apply for this role</h2>
+                <div ><section class="max-w-4xl p-6 mx-auto bg-gray-200 rounded-md shadow-md dark:bg-gray-800">
+                    <h2 class="text-lg font-semibold text-gray-700 capitalize dark:text-white">{is_applied === 'true' ? "You have already applied for this post!!" : "Apply for this role"}</h2>
 
-                    <form onSubmit={handleApply} method='post'>
+                    <form style={{
+                        display: is_applied === 'true' ? 'none' : 'block'
+                    }} onSubmit={handleApply} method='post'>
                         <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
                             <div>
                                 <label class="text-gray-700 dark:text-gray-200" for="passwordConfirmation">Full Name</label>
@@ -81,7 +84,7 @@ const SingleJob = () => {
                                 <label class="text-gray-700 dark:text-gray-200" for="password">Codeforces Username</label>
                                 <input name="cf" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring" />
                             </div>
-                            
+
                         </div>
                         <input type="hidden" name="user_id" value={
                             localStorage.getItem('id')
