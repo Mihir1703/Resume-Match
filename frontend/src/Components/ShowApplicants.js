@@ -41,10 +41,10 @@ const ShowApplicants = () => {
             </nav>
             <div class="container px-6 py-16 mx-auto text-center">
                 <div class="max-w-lg mx-auto">
-                    <h1 class="text-3xl font-semibold text-gray-800 dark:text-white lg:text-4xl">Explore applications for your Job Posting. .</h1>
+                    <h1 class="text-3xl font-semibold text-gray-800 dark:text-white lg:text-4xl">Explore applications for your Job Posting.</h1>
 
                     <p class="mt-6 text-gray-500 dark:text-gray-300">
-                        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Libero similique obcaecati illum mollitia.
+                    Explore and manage job applications efficiently with our platform, designed to streamline the hiring process for your job postings.
                     </p>
                 </div>
             </div>

@@ -42,7 +42,7 @@ const ShowJobsApplication = () => {
                     <h1 class="text-3xl font-semibold text-gray-800 dark:text-white lg:text-4xl">Explore your applied job applications.</h1>
 
                     <p class="mt-6 text-gray-500 dark:text-gray-300">
-                        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Libero similique obcaecati illum mollitia.
+                    Explore all your applied job applications in one place with our user-friendly platform. Never lose track of your job search again.
                     </p>
                 </div>
             </div>
